@@ -1,0 +1,22 @@
+\documentclass[12pt]{article}
+\usepackage[final]{pdfpages}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% \width contains width in cm
+% \height contains height in cm
+
+\usepackage[paperheight=\height cm,paperwidth=\width cm,rmargin=10mm,bmargin=20mm,lmargin=10mm,headheight=40mm,heightrounded]{geometry}
+
+\pagestyle{fancy}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\rfoot{\Huge\thepage\,/\,\Huge\pageref{LastPage}}
+\renewcommand {\headrulewidth}{0pt}
+\renewcommand {\footrulewidth}{0pt}
+
+\begin{document}
+\includepdfset{pagecommand=\thispagestyle{fancy}}
+\includepdf[pages=-]{input.pdf}
+\end{document}

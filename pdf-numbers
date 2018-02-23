@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+name="${1%\.pdf}-numbers"
+wd="$(pwd)"
+dir=/tmp/pdf-numbers
+
+mkdir -p "$dir"
+cp "$1" "$dir/input.pdf"
+cd "$dir"
+cp ~/pdf-numbers/add-page-numbers.tex .
+
+width=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o ":.*x" | grep -o "[0-9.]*"`
+height=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o "x.*" | grep -o "[0-9.]*"`
+
+width=`echo "((${width} * 2.54)+0.5)/1" | bc` # convert to cm and round
+height=`echo "((${height} * 2.54)+0.5)/1" | bc` # convert to cm and round
+
+# pass width and height as parameters by defining them
+# run twice to make sure the references exists
+pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
+pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
+
+mv "$name.pdf" "$wd"
+rm -r "$dir"

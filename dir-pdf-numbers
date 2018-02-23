@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+rm -f *numbers.pdf
+ls *.pdf | xargs --verbose -d '\n' -L 1 pdf-numbers
