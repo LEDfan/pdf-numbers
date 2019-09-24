@@ -1,0 +1,18 @@
+\documentclass[12pt]{article}
+\usepackage[final]{pdfpages}
+\usepackage{fancyhdr}
+
+% width = 210 - 35 -35 = 140
+% height = 297 - 163 -30 = 104mm
+\usepackage[paperheight=104 mm,paperwidth=140 mm,rmargin=10mm,bmargin=20mm,lmargin=10mm,headheight=40mm,heightrounded]{geometry}
+
+\pagestyle{fancy}
+\cfoot{}
+\rfoot{}
+\renewcommand {\headrulewidth}{0pt}
+\renewcommand {\footrulewidth}{0pt}
+
+\begin{document}
+\includepdfset{pagecommand=\thispagestyle{fancy}}
+\includepdf[pages=-,clip,trim=35mm 163mm 35mm 30mm]{input.pdf}
+\end{document}

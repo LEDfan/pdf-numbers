@@ -1,0 +1,15 @@
+#!/bin/bash
+width=$1
+height=$2
+
+name="${3%\.pdf}-numbers"
+wd="$(pwd)"
+dir=/tmp/pdf-numbers
+mkdir -p "$dir"
+cp "$3" "$dir/input.pdf"
+cd "$dir"
+cp ~/bin/add-page-numbers.tex .
+pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
+pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
+mv "$name.pdf" "$wd"
+rm -r "$dir"

@@ -1,0 +1,16 @@
+#!/bin/bash
+name="${1%\.pdf}-crop"
+wd="$(pwd)"
+dir=/tmp/pdf-numbers
+mkdir -p "$dir"
+cp "$1" "$dir/input.pdf"
+cd "$dir"
+cp ~/crop-page.tex .
+r=`pdfinfo input.pdf | grep "Page size" | grep -Eo '[-+]?[0-9]*\.?[0-9]+' | awk -v x=0.3528 '{print $1*x}'`
+r=(${r[@]})
+# pass width and height as parameters by defining them
+# run twice to make sure the reference exists
+pdflatex --jobname "$name" "\\input{crop-page}" > /dev/null
+pdflatex --jobname "$name" "\\input{crop-page}" > /dev/null
+mv "$name.pdf" "$wd"
+rm -r "$dir"
