@@ -1,23 +1,37 @@
-#!/usr/bin/env bash
+#!/bin/bash
 name="${1%\.pdf}-numbers"
 wd="$(pwd)"
 dir=/tmp/pdf-numbers
-
 mkdir -p "$dir"
 cp "$1" "$dir/input.pdf"
 cd "$dir"
-cp ~/pdf-numbers/add-page-numbers.tex .
-
-width=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o ":.*x" | grep -o "[0-9.]*"`
-height=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o "x.*" | grep -o "[0-9.]*"`
-
-width=`echo "((${width} * 2.54)+0.5)/1" | bc` # convert to cm and round
-height=`echo "((${height} * 2.54)+0.5)/1" | bc` # convert to cm and round
-
+cp ~/add-page-numbers.tex .
+#width=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o ":.*x" | grep -o "[0-9.]*"`
+#height=`identify -verbose input.pdf[0] 2> /dev/null | grep "Print size" | grep -o "x.*" | grep -o "[0-9.]*"`
+r=`pdfinfo input.pdf | grep "Page size" | grep -Eo '[-+]?[0-9]*\.?[0-9]+' | awk -v x=0.3528 '{print $1*x}'`
+r=(${r[@]})
+width="${r[0]}"
+height="${r[1]}"
+#exit
+#echo $width
+#echo $height
+#width=`echo "((${width}  + 5 )/10)/1" | bc` # convert to cm and round
+if [ -z "$2" ]; then
+    width=$(python -c "from math import ceil; print ceil($width/10.0)")
+    height=$(python -c "from math import ceil; print ceil($height/10.0)")
+else
+    # scale
+    width=$(python -c "from math import ceil; print round(($width/10.0) * $2)")
+    height=$(python -c "from math import ceil; print round(($height/10.0) * $2)")
+fi
+#height=`echo "((${height} / 10 )+0.5)/1" | bc` # convert to cm and round
+#echo $width
+#echo $height
+#width=28
+#height=21
 # pass width and height as parameters by defining them
-# run twice to make sure the references exists
+# run twice to make sure the reference exists
 pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
 pdflatex --jobname "$name" "\\def\\width{$width}\\def\\height{$height}\\input{add-page-numbers}" > /dev/null
-
 mv "$name.pdf" "$wd"
 rm -r "$dir"
